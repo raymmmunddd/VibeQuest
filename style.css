@@ -1,0 +1,345 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  font-family: 'VT323', monospace;
+  background-image: url('assets/images/background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  caret-color: transparent;
+}
+
+@font-face {
+  font-family: 'GamePaused';
+  src: url('assets/fonts/gamepauseddemoregular-rpmy6.otf') format('truetype');
+}
+
+/* Welcome Section */
+.title {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+  font-family: 'GamePaused', sans-serif;
+  font-size: 200px;
+  color: #FFFFFF;
+  text-shadow: 2px 2px 0 #FF4FD8;
+}
+
+.subtitle {
+  top: 350px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 30px;
+  color: #FFD166
+}
+
+.label {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #aaa;
+  letter-spacing: 2px;
+}
+
+#start {
+  top:450px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+  width: 350px;
+  cursor: pointer;
+  transition: all 0.3s ease; 
+  filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.5)); 
+}
+
+#start:hover {
+  transform: translateX(-50%) scale(1.2); 
+  filter: drop-shadow(0 0 30px rgba(255, 0, 255, 0.8)) drop-shadow(0 0 50px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 70px rgba(138, 43, 226, 0.6));
+}
+
+.hidden{
+  display:none;
+}
+
+/* Mode Selection Section */
+.select {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 28px;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 0 #a855f7;
+  letter-spacing: 4px;
+}
+
+.select-subtitle {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 18px;
+  color: #c0c8e0;
+  text-align: center;
+  margin: 0 0 20px;
+}
+
+.card-title {
+  display: block;
+  margin: 40px auto 0;
+  text-align: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 13px;
+  color: #e0d0ff;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.card-desc {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 17px;
+  color: #d0d8f0;
+  line-height: 1.6;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.mode-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 260px;
+  min-height: 260px;
+  padding: 28px 24px 24px;
+  border: 2px solid #7c3aed;
+  border-radius: 15px;
+  background: rgba(15, 10, 40, 0.6);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.4), inset 0 0 20px rgba(139, 92, 246, 0.08);
+  text-align: center;
+  gap: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.4));
+}
+
+.mode-card:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.7))
+          drop-shadow(0 0 40px rgba(0, 255, 255, 0.5))
+          drop-shadow(0 0 60px rgba(138, 43, 226, 0.5));
+  border-color: #a855f7;
+}
+
+.mode-btn {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  padding: 14px 0;
+  width: 100%;
+  background-color: #00E5FF;
+  color: #0a0a1a;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 0 #009e93;
+  pointer-events: none;
+}
+
+.mode-card:hover .mode-btn {
+  background-color: #8FF3FF;
+  box-shadow: 0 0 18px rgba(0, 229, 212, 0.7), 0 4px 0 #009e93;
+}
+
+/* Snake Game Section */
+body,
+.snake {
+  background-color: #414141;
+}
+
+#game-board {
+  border-radius: 100px;
+  display: grid;
+  grid-template-columns: repeat(25, 20px);
+  grid-template-rows: repeat(25, 20px);
+  margin: 5px;
+}
+
+.game-border-1 {
+  border: #00E5FF solid 10px;
+  border-radius: 25px;
+  box-shadow: inset 0 0 0 10px #00E5FF;
+}
+
+.game-border-2 {
+  border: #1a2d4a solid 8px;
+  border-radius: 26px;
+  box-shadow: inset 0 0 0 10px #1a2d4a;
+}
+
+.game-border-3 {
+  border: #2a3f5f solid 30px;
+  border-radius: 30px;
+  box-shadow: inset 0 0 0 5px #2a3f5f;
+}
+
+#instruction-text {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #FFFFFF;
+  width: 300px;
+  text-align: center;
+  text-transform: capitalize;
+  padding: 30px;
+  margin: 0;
+}
+
+.scores {
+  display: flex;
+  justify-content: space-between;
+}
+
+#score {
+  color: #ffd700;
+}
+
+#score,
+#highScore,
+#timer {
+  font-size: 40px;
+  font-weight: bolder;
+  margin: 10px 0;
+}
+
+#highScore {
+  color: #ffd700;
+  display: none;
+}
+
+#timer {
+  color: #ff6b6b;
+}
+
+.game-border-3 {
+  background-color: #0F0F14;
+}
+
+.snake {
+  border: #00E5FF 1px dotted;
+  background-color: #00E5FF;
+}
+
+.food {
+  background-color: #ffc400;
+  border: #ffc400 5px solid;
+}
+
+/* Personalized Section */
+i {
+  font-size: 80px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.fa-heart {
+  color: #FF4FD8;
+}
+
+.fa-graduation-cap {
+  color: #6FA8FF;
+}
+
+.fa-clover {
+  color: #8A5CFF;
+}
+
+.fa-dice {
+  color: #00E5FF;
+}
+
+.fa-rocket {
+  color: #FFD93D;
+}
+
+.personalized-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.personalized-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100px;
+  min-height: 100px;
+  padding: 28px 24px 24px;
+  border: 2px solid #7c3aed;
+  border-radius: 15px;
+  background: rgba(15, 10, 40, 0.6);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.4), inset 0 0 20px rgba(139, 92, 246, 0.08);
+  text-align: center;
+  gap: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.4));
+}
+
+.personalized-card:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.7))
+          drop-shadow(0 0 40px rgba(0, 255, 255, 0.5))
+          drop-shadow(0 0 60px rgba(138, 43, 226, 0.5));
+  border-color: #a855f7;
+}
+
+.personalized-container .card-title {
+  margin-top: 10px;
+}
+
+.personalized-btn {
+  display: block;
+  margin: 40px auto 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: fit-content;
+  padding: 14px 40px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  background-color: #00E5FF;
+  color: #0a0a1a;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 0 #009e93;
+}
+
+.personalized-btn:hover {
+  transform: scale(1.1);
+  background-color: #8FF3FF;
+  box-shadow: 0 0 18px rgba(0, 229, 212, 0.7), 0 4px 0 #009e93;
+}
