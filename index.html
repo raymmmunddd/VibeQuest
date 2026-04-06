@@ -3,28 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    <link rel="icon" href="assets/images/cookie_closed.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&family=Poppins:wght@300;400;600&display=swap">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <link rel="stylesheet" href="style.css" />
+    <script src="assets/data/messages.js" defer></script>
     <script src="script.js" defer></script>
-
-    <title>VibeQuest</title>
+    <title>FortunePop</title>
   </head>
 
   <body>
+
   <!-- WELCOME SCREEN -->
   <section id="welcome">
     <p class="label">HOME</p>
-    <h1 class="title">FORTUNEPOP</h1>
+    <h1 class="title">
+      <span class="title-fortune">FORTUNE</span><span class="title-pop">POP</span>
+    </h1>
     <h2 class="subtitle">TAP THE COOKIE TO PLAY !</h2>
-    
     <img id="start" src="assets/images/cookie_closed.png" alt="cookie"/>
   </section>
 
@@ -33,14 +32,12 @@
     <p class="label">MODE</p>
     <h1 class="select">HOW WILL FATE FIND YOU?</h1>
     <h3 class="select-subtitle">Choose how you want your fortune revealed.</h3>
-
     <div class="mode-container">
       <div class="mode-card" id="personalizedBtn">
         <p class="card-title">PERSONALIZED</p>
         <span class="card-desc">Choose a fortune path based on what your heart needs most.</span>
         <button class="mode-btn">SELECT</button>
       </div>
-
       <div class="mode-card" id="snakeBtn">
         <p class="card-title">GAME CHALLENGE</p>
         <span class="card-desc">Catch the fortune in a quick mini game challenge.</span>
@@ -54,45 +51,82 @@
     <p class="label">PERSONALIZED</p>
     <h1 class="select">PICK YOUR FORTUNE PATH:</h1>
     <h3 class="select-subtitle">Choose the path your fortune will follow.</h3>
-
     <div class="personalized-container">
       <div>
-        <div class="personalized-card" id="romanceBtn">
-          <i class="fa-solid fa-heart"></i>
-        </div>
+        <div class="personalized-card" id="romanceBtn"><i class="fa-solid fa-heart"></i></div>
         <span class="card-title">ROMANCE</span>
       </div>
-
       <div>
-        <div class="personalized-card" id="careerBtn">
-          <i class="fa-solid fa-graduation-cap"></i>
-        </div>
+        <div class="personalized-card" id="careerBtn"><i class="fa-solid fa-graduation-cap"></i></div>
         <span class="card-title">CAREER</span>
       </div>
-
       <div>
-        <div class="personalized-card" id="goodJujuBtn">
-          <i class="fa-solid fa-clover"></i>
-        </div>
+        <div class="personalized-card" id="goodJujuBtn"><i class="fa-solid fa-clover"></i></div>
         <span class="card-title">GOOD JUJU</span>
       </div>
-
       <div>
-        <div class="personalized-card" id="wildCardBtn">
-          <i class="fa-solid fa-dice"></i>
-        </div>
+        <div class="personalized-card" id="wildCardBtn"><i class="fa-solid fa-dice"></i></div>
         <span class="card-title">WILD CARD</span>
       </div>
-
       <div>
-        <div class="personalized-card" id="vibeBoostBtn">
-          <i class="fa-solid fa-rocket"></i>
-        </div>
+        <div class="personalized-card" id="vibeBoostBtn"><i class="fa-solid fa-rocket"></i></div>
         <span class="card-title">VIBE BOOST</span>
-      </div>  
-    </div>     
+      </div>
+    </div>
+    <button class="personalized-btn" id="revealFortuneBtn">REVEAL MY FORTUNE</button>
+  </section>
 
-    <button class="personalized-btn">REVEAL MY FORTUNE</button>
+  <!-- PERSONALIZED QUIZ SCREEN -->
+  <section id="quizMode" class="hidden">
+    <p class="label">READING YOUR VIBE</p>
+    <div class="quiz-container">
+      <div class="quiz-progress">
+        <span class="quiz-step" id="quizStepLabel">QUESTION 1</span>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quizProgressFill"></div>
+        </div>
+      </div>
+      <div class="quiz-theme-badge" id="quizThemeBadge">
+        <i class="fa-solid fa-heart"></i>
+        <span id="quizThemeLabel">ROMANCE</span>
+      </div>
+      <h2 class="quiz-question" id="quizQuestion">What does your heart need most right now?</h2>
+      <div class="quiz-options" id="quizOptions"></div>
+    </div>
+  </section>
+
+  <!-- FORTUNE REVEAL SCREEN -->
+  <section id="fortuneReveal" class="hidden">
+    <p class="label">YOUR FORTUNE</p>
+    <div class="fortune-reveal-container">
+      <div class="fortune-pre-open" id="fortunePreOpen">
+        <p class="fortune-reveal-hint-top">TAP THE COOKIE</p>
+        <div class="fortune-cookie-wrap" id="fortuneCookieWrap">
+          <img class="fortune-cookie-img" id="fortuneCookieImg" src="assets/images/cookie_closed.png" alt="fortune cookie"/>
+          <div class="cookie-sparkles" id="cookieSparkles"></div>
+        </div>
+        <p class="fortune-reveal-hint-bottom">TO REVEAL YOUR FORTUNE</p>
+      </div>
+      <div class="fortune-opened-layout hidden" id="fortuneOpenedLayout">
+        <div class="fortune-cookie-static">
+          <img class="fortune-cookie-img" src="assets/images/cookie_open_ver2.png" alt="fortune cookie open"/>
+        </div>
+        <div class="fortune-message-box" id="fortuneMessageBox">
+          <p class="fortune-message-label">YOUR FORTUNE:</p>
+          <p class="fortune-name" id="fortuneName"></p>
+          <div class="fortune-paper">
+            <p class="fortune-text" id="fortuneText"></p>
+          </div>
+        </div>
+      </div>
+      <div class="fortune-spin-row hidden" id="fortuneSpinRow">
+        <p class="fortune-spin-hint">Spin the wheel to see what prize you win!</p>
+        <button class="spin-btn" id="fortuneToSpinBtn">
+          <i class="fa-solid fa-circle-notch"></i>
+          SPIN THE WHEEL
+        </button>
+      </div>
+    </div>
   </section>
 
   <!-- SNAKE GAME SCREEN -->
@@ -101,7 +135,7 @@
     <div class="scores">
       <h1 id="score">Score 000</h1>
       <h1 id="highScore">000</h1>
-      <h1 id="timer">Timer 30s</h1>
+      <h1 id="timer">Timer 030</h1>
     </div>
     <div class="game-border-1">
       <div class="game-border-2">
@@ -110,9 +144,52 @@
         </div>
       </div>
     </div>
-    <h1 id="instruction-text">Press spacebar to start the game</h1>
-    <img id="logo"/>
+    <h1 id="instruction-text">Press spacebar to start</h1>
+    <div id="countdown-overlay" class="hidden">
+      <span id="countdown-number">3</span>
+    </div>
   </section>
-    
+
+  <!-- SNAKE COOKIE CHOOSE SCREEN -->
+  <section id="snakeCookieScreen" class="hidden">
+    <p class="label">CHOOSE YOUR COOKIE</p>
+    <h1 class="select" id="snakeCookieTitle">CHOOSE YOUR COOKIE</h1>
+    <h3 class="select-subtitle" id="snakeCookieSubtitle">You collected (0) cookies!</h3>
+    <div class="cookie-choices" id="cookieChoices"></div>
+    <p class="cookie-pick-hint">Pick one to reveal your fortune.</p>
+  </section>
+
+  <!-- SPIN THE WHEEL SCREEN -->
+  <section id="spinWheelScreen" class="hidden">
+    <p class="label">SPIN THE WHEEL</p>
+    <h1 class="select">YOUR LUCKY PRIZE!</h1>
+    <h3 class="select-subtitle" id="spinSubtitle">Give it a spin and see what fate has in store.</h3>
+    <div class="wheel-area">
+      <div class="wheel-container">
+        <div class="wheel-pointer"><i class="fa-solid fa-caret-down"></i></div>
+        <canvas id="wheelCanvas" width="380" height="380"></canvas>
+      </div>
+      <div class="wheel-result-area">
+        <div class="wheel-prize-display hidden" id="wheelPrizeDisplay">
+          <i class="fa-solid fa-gift wheel-prize-icon" id="wheelPrizeIcon"></i>
+          <p class="wheel-prize-label" id="wheelPrizeLabel">YOU WON!</p>
+          <p class="wheel-prize-name" id="wheelPrizeName"></p>
+          <button class="spin-btn" id="playAgainBtn">
+            <i class="fa-solid fa-rotate-right"></i>
+            PLAY AGAIN
+          </button>
+        </div>
+        <div class="wheel-pre-spin" id="wheelPreSpin">
+          <p class="wheel-pre-text">The wheel holds your prize...</p>
+          <p class="wheel-pre-sub">Are you ready?</p>
+        </div>
+      </div>
+    </div>
+    <button class="spin-btn" id="spinBtn">
+      <i class="fa-solid fa-circle-notch"></i>
+      SPIN THE WHEEL
+    </button>
+  </section>
+
   </body>
 </html>
