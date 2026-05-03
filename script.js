@@ -308,7 +308,7 @@ function renderQuizNode(tree, nodeId) {
   nextBtn.textContent = isLast ? 'REVEAL *' : 'NEXT >';
   nextBtn.classList.remove('visible');
 
-  nextBtn.onclick = () => {
+  nextBtn.onclick = async () => {
     if (!selectedOption) return;
     AudioManager.playShine();
     quizPath.push({ nodeId, answer: selectedOption.text, tags: selectedOption.tags || [] });
@@ -317,13 +317,15 @@ function renderQuizNode(tree, nodeId) {
       quizCurrentNode = selectedOption.next;
       renderQuizNode(tree, quizCurrentNode);
     } else {
-      pendingFortune = resolveFortuneFromPath(tree);
+      nextBtn.textContent = 'READING...';
+      nextBtn.classList.remove('visible');
+      pendingFortune = await resolveFortuneFromPath(tree);
       showFortuneReveal();
     }
   };
 }
 
-function resolveFortuneFromPath(tree) {
+async function resolveFortuneFromPath(tree) {
   const tagCount = {};
   quizPath.forEach(step => {
     (step.tags || []).forEach(tag => {
@@ -338,9 +340,45 @@ function resolveFortuneFromPath(tree) {
 
   const pool = tree.tagPools[bestTag] || Object.values(tree.tagPools).flat();
   const fortunes = FORTUNES[quizThemeKey];
-  const idx = pool[Math.floor(Math.random() * pool.length)];
-  const fortune = fortunes[idx] || fortunes[Math.floor(Math.random() * fortunes.length)];
+  const used = await fetchUsedFortunes();
+  const fortune =
+    pickUnusedFortune(fortunes, pool, used) ||
+    pickUnusedFortune(fortunes, fortunes.map((_, i) => i), used) ||
+    pickUnusedFortuneFromAnyTheme(used);
+  return fortuneToId(fortune || fortunes[Math.floor(Math.random() * fortunes.length)]);
+}
+
+function fortuneToId(fortune) {
   return `${fortune.name}: ${fortune.text}`;
+}
+
+function isUsedFortune(fortune, used) {
+  const id = fortuneToId(fortune);
+  return [...used].some((usedId) => id === usedId || id.startsWith(usedId));
+}
+
+function pickUnusedFortune(fortunes, indexes, used) {
+  const available = indexes
+    .map((idx) => fortunes[idx])
+    .filter((fortune) => fortune && !isUsedFortune(fortune, used));
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+function pickUnusedFortuneFromAnyTheme(used) {
+  const available = Object.values(FORTUNES)
+    .flat()
+    .filter((fortune) => !isUsedFortune(fortune, used));
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+async function fetchUsedFortunes() {
+  try {
+    const res = await fetch('/api/fortunes/used');
+    if (!res.ok) throw new Error('Used fortunes unavailable');
+    return new Set(await res.json());
+  } catch (_) {
+    return new Set();
+  }
 }
 
 // ========== FORTUNE REVEAL ==========
@@ -562,12 +600,13 @@ function showSnakeCookieSelect() {
     const item = document.createElement('div');
     item.className = 'cookie-choice-item' + (isGolden?' golden':'');
     item.innerHTML = `<img src="assets/images/cookie_closed.png" alt="fortune cookie"/>`;
-    item.addEventListener('click', () => {
+    item.addEventListener('click', async () => {
       AudioManager.playClick();
       if (isGolden) window._goldenSpin = true;
-      const pool = FORTUNES[['romance','career','goodJuju','vibeBoost','wildCard'][Math.floor(Math.random()*5)]];
-      const f = pool[Math.floor(Math.random()*pool.length)];
-      pendingFortune = `${f.name}: ${f.text}`;
+      const used = await fetchUsedFortunes();
+      const allFortunes = Object.values(FORTUNES).flat();
+      const f = pickUnusedFortune(allFortunes, allFortunes.map((_, i) => i), used) || allFortunes[Math.floor(Math.random()*allFortunes.length)];
+      pendingFortune = fortuneToId(f);
       showFortuneReveal();
     });
     choices.appendChild(item);
@@ -739,7 +778,7 @@ async function spinFromApi() {
   const res = await fetch('/api/prizes/spin', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ clientId, fortuneId: pendingFortune.slice(0, 80) })
+    body: JSON.stringify({ clientId, fortuneId: pendingFortune })
   });
   const prize = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(prize.error || 'Please try again.');
