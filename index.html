@@ -16,6 +16,12 @@
   </head>
 
   <body>
+  <button id="backBtn" class="back-btn hidden" type="button" aria-label="Back">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
+  <div id="transitionFx" class="transition-fx hidden" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
 
   <!-- WELCOME SCREEN -->
   <section id="welcome">
@@ -34,11 +40,13 @@
     <h3 class="select-subtitle">Choose how you want your fortune revealed.</h3>
     <div class="mode-container">
       <div class="mode-card" id="personalizedBtn">
+        <i class="fa-solid fa-wand-magic-sparkles mode-icon"></i>
         <p class="card-title">PERSONALIZED</p>
         <span class="card-desc">Choose a fortune path based on what your heart needs most.</span>
         <button class="mode-btn">SELECT</button>
       </div>
       <div class="mode-card" id="snakeBtn">
+        <i class="fa-solid fa-gamepad mode-icon"></i>
         <p class="card-title">GAME CHALLENGE</p>
         <span class="card-desc">Catch the fortune in a quick mini game challenge.</span>
         <button class="mode-btn">SELECT</button>
@@ -100,12 +108,11 @@
     <p class="label">YOUR FORTUNE</p>
     <div class="fortune-reveal-container">
       <div class="fortune-pre-open" id="fortunePreOpen">
-        <p class="fortune-reveal-hint-top">TAP THE COOKIE</p>
+        <p class="fortune-reveal-hint-top">TAP THE COOKIE AND REVEAL YOUR FORTUNE</p>
         <div class="fortune-cookie-wrap" id="fortuneCookieWrap">
           <img class="fortune-cookie-img" id="fortuneCookieImg" src="assets/images/cookie_closed.png" alt="fortune cookie"/>
           <div class="cookie-sparkles" id="cookieSparkles"></div>
         </div>
-        <p class="fortune-reveal-hint-bottom">TO REVEAL YOUR FORTUNE</p>
       </div>
       <div class="fortune-opened-layout hidden" id="fortuneOpenedLayout">
         <div class="fortune-cookie-static">
@@ -134,7 +141,6 @@
     <p class="label">SNAKE</p>
     <div class="scores">
       <h1 id="score">Score 000</h1>
-      <h1 id="highScore">000</h1>
       <h1 id="timer">Timer 030</h1>
     </div>
     <div class="game-border-1">

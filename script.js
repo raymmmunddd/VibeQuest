@@ -135,6 +135,21 @@ const AudioManager = (() => {
     try { const ac = ctx(); tone(ac, 'sine', 440, 0.15, 0, 0.08); } catch(e) {}
   }
 
+  function playSelect() {
+    try {
+      const ac = ctx();
+      tone(ac, 'square', 520, 0.16, 0, 0.08, 780);
+      tone(ac, 'sine', 1040, 0.12, 0.04, 0.18);
+    } catch(e) {}
+  }
+
+  function playShine() {
+    try {
+      const ac = ctx();
+      [784, 1175, 1568, 2093].forEach((f, i) => tone(ac, 'sine', f, 0.18, i * 0.06, i * 0.06 + 0.3));
+    } catch(e) {}
+  }
+
   let spinTickTimeout = null;
   function playSpinStart() {
     try {
@@ -171,14 +186,17 @@ const AudioManager = (() => {
   }
 
   return { playSnakeMove, playEat, playGoldenEat, playDeath, playCookieCrack,
-           playCountdown, playCountdownGo, playClick, playSpinStart, playSpinWin, stopSpinTick };
+           playCountdown, playCountdownGo, playClick, playSelect, playShine, playSpinStart, playSpinWin, stopSpinTick };
 })();
 
 // ========== STATE ==========
 let currentTheme = null;
 let pendingFortune = '';
-let snakeFoodEaten = 0;
-let snakeGoldenEaten = 0;
+let fortuneOpened = false;
+let screenStack = ['welcome'];
+let activePrizes = WHEEL_PRIZES;
+const clientId = localStorage.getItem('fortunePopClientId') || crypto.randomUUID();
+localStorage.setItem('fortunePopClientId', clientId);
 
 // ========== QUIZ STATE ==========
 let quizThemeKey = null;
@@ -186,28 +204,46 @@ let quizPath = [];
 let quizCurrentNode = null;
 
 // ========== SCREEN MANAGEMENT ==========
-function showScreen(id) {
+function showScreen(id, push = true) {
   document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
+  if (id === 'welcome') screenStack = ['welcome'];
+  if (push && screenStack[screenStack.length - 1] !== id) screenStack.push(id);
+  document.getElementById('backBtn').classList.toggle('hidden', id === 'welcome');
   window.scrollTo(0, 0);
 }
 
+function transitionToScreen(id) {
+  const fx = document.getElementById('transitionFx');
+  fx.classList.remove('hidden', 'cloud-rise');
+  AudioManager.playShine();
+  requestAnimationFrame(() => fx.classList.add('cloud-rise'));
+  setTimeout(() => showScreen(id), 520);
+  setTimeout(() => fx.classList.add('hidden'), 1150);
+}
+
+document.getElementById('backBtn').addEventListener('click', () => {
+  AudioManager.playClick();
+  if (screenStack.length > 1) screenStack.pop();
+  showScreen(screenStack[screenStack.length - 1] || 'welcome', false);
+});
+
 // ========== NAV ==========
 document.getElementById('start').addEventListener('click', () => {
-  AudioManager.playClick(); showScreen('modeSelect');
+  AudioManager.playCookieCrack(); transitionToScreen('modeSelect');
 });
 document.getElementById('personalizedBtn').addEventListener('click', () => {
-  AudioManager.playClick(); showScreen('personalizedMode');
+  AudioManager.playSelect(); showScreen('personalizedMode');
 });
 document.getElementById('snakeBtn').addEventListener('click', () => {
-  AudioManager.playClick(); showScreen('snakeMode'); resetSnakeGame();
+  AudioManager.playSelect(); showScreen('snakeMode'); resetSnakeGame();
 });
 
 // ========== PERSONALIZED: THEME SELECTION ==========
 const themeCards = { romanceBtn:'romance', careerBtn:'career', goodJujuBtn:'goodJuju', wildCardBtn:'wildCard', vibeBoostBtn:'vibeBoost' };
 Object.entries(themeCards).forEach(([btnId, themeKey]) => {
   document.getElementById(btnId).addEventListener('click', function() {
-    AudioManager.playClick();
+    AudioManager.playSelect();
     document.querySelectorAll('.personalized-card').forEach(c => c.classList.remove('selected'));
     this.classList.add('selected');
     currentTheme = themeKey;
@@ -216,7 +252,7 @@ Object.entries(themeCards).forEach(([btnId, themeKey]) => {
 
 document.getElementById('revealFortuneBtn').addEventListener('click', () => {
   if (!currentTheme) return;
-  AudioManager.playClick();
+  AudioManager.playShine();
   startQuiz(currentTheme);
 });
 
@@ -254,7 +290,7 @@ function renderQuizNode(tree, nodeId) {
     div.className = 'quiz-option';
     div.innerHTML = `<span class="quiz-option-letter">${letters[i]}</span><span class="quiz-option-text">${opt.text}</span>`;
     div.addEventListener('click', () => {
-      AudioManager.playClick();
+      AudioManager.playSelect();
       document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
       div.classList.add('selected');
       selectedOption = opt;
@@ -269,12 +305,12 @@ function renderQuizNode(tree, nodeId) {
     nextBtn.className = 'quiz-next-btn';
     document.querySelector('.quiz-container').appendChild(nextBtn);
   }
-  nextBtn.textContent = isLast ? 'REVEAL ✦' : 'NEXT ▶';
+  nextBtn.textContent = isLast ? 'REVEAL *' : 'NEXT >';
   nextBtn.classList.remove('visible');
 
   nextBtn.onclick = () => {
     if (!selectedOption) return;
-    AudioManager.playClick();
+    AudioManager.playShine();
     quizPath.push({ nodeId, answer: selectedOption.text, tags: selectedOption.tags || [] });
 
     if (selectedOption.next) {
@@ -309,6 +345,7 @@ function resolveFortuneFromPath(tree) {
 
 // ========== FORTUNE REVEAL ==========
 function showFortuneReveal() {
+  fortuneOpened = false;
   showScreen('fortuneReveal');
   document.getElementById('fortuneCookieImg').src = 'assets/images/cookie_closed.png';
   document.getElementById('fortunePreOpen').classList.remove('hidden');
@@ -318,6 +355,8 @@ function showFortuneReveal() {
 }
 
 function revealFortune() {
+  if (fortuneOpened) return;
+  fortuneOpened = true;
   const wrap = document.getElementById('fortuneCookieWrap');
   wrap.onclick = null;
   const img = document.getElementById('fortuneCookieImg');
@@ -544,12 +583,15 @@ function showSpinWheel() {
   spinCount = window._goldenSpin ? 2 : 1;
   window._goldenSpin = false;
   document.getElementById('spinSubtitle').textContent = spinCount > 1
-    ? '✦ Golden Cookie! You get 2 spins! ✦'
+    ? '* Golden Cookie! You get 2 spins! *'
     : 'Give it a spin and see what fate has in store.';
   showScreen('spinWheelScreen');
+  loadPrizes();
   drawWheel(wheelCurrentAngle);
   document.getElementById('wheelPrizeDisplay').classList.add('hidden');
   document.getElementById('wheelPreSpin').style.display = 'block';
+  document.querySelector('.wheel-pre-text').textContent = 'The wheel holds your prize...';
+  document.querySelector('.wheel-pre-sub').textContent = 'Are you ready?';
   document.getElementById('spinBtn').style.visibility = 'visible';
   wheelSpinning = false;
 }
@@ -558,10 +600,10 @@ function drawWheel(rotDeg) {
   const canvas = document.getElementById('wheelCanvas');
   const c = canvas.getContext('2d');
   const cx = canvas.width/2, cy = canvas.height/2, r = cx-10;
-  const seg = (2*Math.PI)/WHEEL_PRIZES.length;
+  const seg = (2*Math.PI)/activePrizes.length;
   c.clearRect(0,0,canvas.width,canvas.height);
   c.save(); c.translate(cx,cy); c.rotate(rotDeg*Math.PI/180); c.translate(-cx,-cy);
-  WHEEL_PRIZES.forEach((p,i) => {
+  activePrizes.forEach((p,i) => {
     const sa = i*seg - Math.PI/2, ea = sa+seg;
     c.beginPath(); c.moveTo(cx,cy); c.arc(cx,cy,r,sa,ea); c.closePath();
     c.fillStyle = shade(p.color, i%2===0?-30:0); c.fill();
@@ -578,7 +620,7 @@ function drawWheel(rotDeg) {
   c.fillStyle='#0F0F14'; c.fill();
   c.strokeStyle='#7c3aed'; c.lineWidth=3; c.stroke();
   c.fillStyle='#a855f7'; c.font='16px "Press Start 2P"';
-  c.textAlign='center'; c.textBaseline='middle'; c.fillText('★',cx,cy);
+  c.textAlign='center'; c.textBaseline='middle'; c.fillText('*',cx,cy);
 }
 
 function shade(hex, amt) {
@@ -589,16 +631,28 @@ function shade(hex, amt) {
   return `rgb(${r},${g},${b})`;
 }
 
-document.getElementById('spinBtn').addEventListener('click', () => {
+document.getElementById('spinBtn').addEventListener('click', async () => {
   if (wheelSpinning) return;
   wheelSpinning = true;
-  AudioManager.playSpinStart();
   document.getElementById('spinBtn').style.visibility = 'hidden';
   document.getElementById('wheelPrizeDisplay').classList.add('hidden');
   document.getElementById('wheelPreSpin').style.display = 'block';
+  document.querySelector('.wheel-pre-text').textContent = 'Saving your spin...';
+  document.querySelector('.wheel-pre-sub').textContent = 'Hold tight.';
 
-  const prizeIdx = Math.floor(Math.random()*WHEEL_PRIZES.length);
-  const segDeg = 360/WHEEL_PRIZES.length;
+  let prizeIdx;
+  try {
+    prizeIdx = await spinFromApi();
+  } catch (err) {
+    showSpinError(err.message);
+    return;
+  }
+
+  AudioManager.playSpinStart();
+  document.querySelector('.wheel-pre-text').textContent = 'The wheel is choosing...';
+  document.querySelector('.wheel-pre-sub').textContent = 'Fate is locked in.';
+
+  const segDeg = 360/activePrizes.length;
   const finalAngle = (360-(prizeIdx*segDeg+segDeg/2))%360;
   const extra = 5+Math.floor(Math.random()*3);
   const currNorm = ((wheelCurrentAngle%360)+360)%360;
@@ -619,8 +673,16 @@ document.getElementById('spinBtn').addEventListener('click', () => {
   requestAnimationFrame(animate);
 });
 
+function showSpinError(message) {
+  wheelSpinning = false;
+  AudioManager.stopSpinTick();
+  document.getElementById('spinBtn').style.visibility = 'visible';
+  document.querySelector('.wheel-pre-text').textContent = 'Spin was not saved.';
+  document.querySelector('.wheel-pre-sub').textContent = message || 'Please try again.';
+}
+
 function showWheelPrize(idx) {
-  const p = WHEEL_PRIZES[idx];
+  const p = activePrizes[idx];
   document.getElementById('wheelPreSpin').style.display = 'none';
   document.getElementById('wheelPrizeIcon').className = `fa-solid ${p.icon} wheel-prize-icon`;
   document.getElementById('wheelPrizeIcon').style.color = p.color;
@@ -657,4 +719,32 @@ function showWheelPrize(idx) {
       document.getElementById('wheelPreSpin').style.display = 'block';
     };
   }
+}
+
+async function loadPrizes() {
+  try {
+    const res = await fetch('/api/prizes');
+    if (!res.ok) throw new Error('Prize API unavailable');
+    const prizes = await res.json();
+    if (prizes.length) {
+      activePrizes = prizes;
+      drawWheel(wheelCurrentAngle);
+    }
+  } catch (_) {
+    activePrizes = WHEEL_PRIZES;
+  }
+}
+
+async function spinFromApi() {
+  const res = await fetch('/api/prizes/spin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ clientId, fortuneId: pendingFortune.slice(0, 80) })
+  });
+  const prize = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(prize.error || 'Please try again.');
+
+  let idx = activePrizes.findIndex((p) => p._id === prize._id || p.label === prize.label);
+  if (idx < 0) idx = activePrizes.push(prize) - 1;
+  return idx;
 }
