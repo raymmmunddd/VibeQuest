@@ -26,8 +26,6 @@ const FORTUNES = {
     { name: "Still Pending", text: "Someone might be waiting for the right moment to message you." },
     { name: "Secret Crush", text: "May secret admirer ka… hindi lang siya ready magpakilala yet." },
     { name: "In The Moment", text: "Someone smiled when you walked in. Oo, ikaw talaga yun." },
-    { name: "Take Notice", text: "Someone actually hopes you notice them too." },
-    { name: "Eye Contact", text: "That random eye contact earlier? Hmm… baka may meaning." },
     { name: "Vibe Check", text: "Someone enjoys your vibe more than you realize." },
   ],
 
@@ -46,7 +44,6 @@ const FORTUNES = {
     { name: "Right Timing", text: "Timing matters today. The right move at the right moment can change things." },
     { name: "Confidence Move", text: "Minsan kailangan lang ng konting lakas ng loob. Today might be that moment." },
     { name: "Leadership Energy", text: "People might naturally look to you today when decisions need to be made." },
-    { name: "Focus Mode", text: "Clear focus today could help you finish something important." },
     { name: "Momentum Shift", text: "Something small today might suddenly move things forward." },
     { name: "Power Decision", text: "A decision you make today could shape your direction." },
     { name: "Bold Energy", text: "Showing initiative today might lead to something interesting." },
@@ -93,7 +90,6 @@ const FORTUNES = {
     { name: "Fortune Breeze", text: "There's good energy floating around you today." },
     { name: "Positive Ripple", text: "A small good moment today could create more good moments later." },
     { name: "Bright Turn", text: "Something ordinary today might turn into something pleasant." },
-    { name: "Feel Good Moment", text: "Expect a moment today that simply feels nice and light." },
     { name: "The Dasurv", text: "All the good karma you've been planting is blooming." },
     { name: "The Free Coffee", text: "May manlilibre sa'yo ng kape. Caffeine levels: Restored!" },
     { name: "The Clear Skin", text: "The universe is healing your breakouts. Glowing ka for today's video!" },
@@ -110,7 +106,6 @@ const FORTUNES = {
     { name: "Wish Come True", text: "Something you've been hoping for might finally happen soon." },
     { name: "Mini Win", text: "Baka may small win ka today. Watch out." },
     { name: "Keep Eyes Open", text: "Keep your eyes open, may magandang moment somewhere today." },
-    { name: "Universe Support", text: "The universe might be on your side today." },
   ],
 
   vibeBoost: [
@@ -176,8 +171,6 @@ const FORTUNES = {
     { name: "Funny Twist", text: "Something random today might turn into a funny story later." },
     { name: "Unexpected Talk", text: "Someone unexpected might start talking to you soon." },
     { name: "Random Chika", text: "Baka may marinig kang chika today that makes your day." },
-    { name: "Random Invite", text: "Don't ignore random invites today. Baka fun pala." },
-    { name: "Mind Talk", text: "Someone might say something that stays in your mind all day." },
     { name: "Unexpected Place", text: "You might end up somewhere you didn't plan today." },
     { name: "Chaos Fun", text: "May konting gulo today… pero masaya." },
   ],
@@ -335,10 +328,10 @@ const QUIZ_TREES = {
       taken_sweet: [3, 4, 5, 15],           
       taken_peace: [4, 5, 16],              
       single_noticed: [6, 8, 12, 13, 18, 20, 21],  
-      single_surprise: [7, 9, 11, 14, 18, 23, 24], 
+      single_surprise: [7, 9, 11, 14, 18, 23], 
       single_solo: [6, 10, 11, 13, 14],      
-      crush_known: [19, 21, 22, 25, 26, 27],
-      crush_secret: [18, 19, 20, 23, 24, 25, 26, 28],
+      crush_known: [19, 21, 22, 24],
+      crush_secret: [18, 19, 20, 23, 24],
     }
   },
 
@@ -491,14 +484,14 @@ const QUIZ_TREES = {
     },
     tagPools: {
       student_cram: [0, 3, 4, 7, 8, 9],        
-      student_lead: [6, 9, 12, 13, 23],         
-      student_thesis: [4, 5, 7, 8, 22, 26, 27],  
-      student_lost: [10, 11, 12, 16, 24, 25, 34], 
-      hustle_burn: [1, 2, 4, 16, 17, 20, 22],    
-      work_grind: [2, 17, 20, 21, 22, 26, 28],   
-      work_rise: [11, 13, 23, 27, 29, 31, 32],   
-      work_opp: [10, 11, 14, 15, 25, 29, 30],   
-      work_thrive: [18, 19, 27, 28, 29, 30, 39],  
+      student_lead: [6, 9, 12, 13, 22],         
+      student_thesis: [4, 5, 7, 8, 21, 25, 26],  
+      student_lost: [10, 11, 12, 15, 23, 24, 33], 
+      hustle_burn: [1, 2, 4, 15, 16, 19, 21],    
+      work_grind: [2, 16, 19, 20, 21, 25, 27],   
+      work_rise: [11, 13, 22, 26, 28, 30, 31],   
+      work_opp: [10, 11, 14, 24, 28, 29],   
+      work_thrive: [17, 18, 26, 27, 28, 29, 38],  
     }
   },
 
@@ -648,12 +641,12 @@ const QUIZ_TREES = {
       },
     },
     tagPools: {
-      cash_luck: [6, 7, 20, 23, 24, 26, 27],
-      daily_luck: [0, 3, 8, 10, 13, 17, 18, 27, 28, 29, 33, 34],
-      surprise_luck: [2, 5, 7, 11, 14, 22, 23, 26, 31],
-      mood_luck: [1, 3, 9, 12, 13, 16, 18, 30, 32],
-      glow_luck: [2, 4, 8, 15, 21, 22, 28],
-      find_luck: [5, 7, 25, 26, 34, 35],
+      cash_luck: [6, 7, 19, 22, 23, 25, 26],
+      daily_luck: [0, 3, 8, 10, 13, 17, 26, 27, 28, 32, 33],
+      surprise_luck: [2, 5, 7, 11, 14, 21, 22, 25, 30],
+      mood_luck: [1, 3, 9, 12, 13, 16, 29, 31],
+      glow_luck: [2, 4, 8, 15, 20, 21, 27],
+      find_luck: [5, 7, 24, 25, 33],
     }
   },
 
@@ -968,11 +961,11 @@ const QUIZ_TREES = {
     },
     tagPools: {
       lutang: [0, 1, 2, 3, 4, 5, 14, 15],
-      random: [3, 4, 6, 7, 8, 10, 11, 21, 22, 23, 24],
-      budol: [15, 16, 19, 21, 26],
+      random: [3, 4, 6, 7, 8, 10, 11, 21, 22, 23],
+      budol: [15, 16, 19, 21, 24],
       awkward: [0, 2, 9, 10, 17, 18, 22],
-      coincidence: [1, 8, 9, 10, 11, 13, 24],
-      chaos: [12, 13, 14, 15, 17, 18, 19, 20, 25, 26],
+      coincidence: [1, 8, 9, 10, 11, 13],
+      chaos: [12, 13, 14, 15, 17, 18, 19, 20, 24],
     }
   },
 };
